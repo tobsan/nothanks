@@ -1,8 +1,9 @@
 module Main where
 
-import System.Random
+import System.Random (newStdGen)
 import Control.Monad.State
-import Data.List
+import Data.List (sortBy)
+import Data.Char (ord)
 
 import NoThanks
 
@@ -64,10 +65,22 @@ runGame = do
                       ioPrint "Invalid command, try again"
                       decidePrompt nm
 
+getPlayers :: IO [String]
+getPlayers = do
+    putStr "Select number of players (2-5): "
+    c <- getChar
+    putStrLn ""
+    case c `elem` ['2'..'5'] of
+        True -> replicateM ((ord c) - 48) $ do
+            putStr "Enter player name: "
+            getLine
+        False -> putStrLn "Invalid number, try again" >> getPlayers
+
 main :: IO ()
 main = do
     gen <- newStdGen
-    let game = newGame gen ["Tobias", "Lina"]
+    players <- getPlayers
+    let game = newGame gen players
     (Game _ _ ps _ _) <- execStateT gameLoop game
     let scores = sortBy (\(_,a) (_,b) -> compare a b) $ map (\p -> (name p, totalScore p)) ps
     putStrLn "*********"
