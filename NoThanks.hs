@@ -1,4 +1,26 @@
-module NoThanks where
+module NoThanks (
+    totalScore,
+    playerCards,
+    sumCards,
+
+    Player(),
+    name,
+    cards,
+    markers,
+
+    Game(),
+    currentBet,
+    players,
+    deck,
+
+    scoreList,
+    newGame,
+    acceptCard,
+    placeBet,
+    topCard,
+    getCurrentPlayer,
+    canBet
+  ) where
 
 import System.Random.Shuffle
 import System.Random
@@ -15,6 +37,9 @@ data Player = Player {
 
 totalScore :: Player -> Int
 totalScore (Player _ cs ms) = (sumCards cs) - ms
+
+playerCards :: Player -> [[Int]]
+playerCards (Player _ cs _) = groupCards cs
 
 groupCards :: [Int] -> [[Int]]
 groupCards xs = foldr comp [] $ sort xs
@@ -45,6 +70,9 @@ data Game = Game {
     currentPlayer :: Int,
     currentBet :: Int
 } deriving Show
+
+scoreList :: Game -> [(String, Int)]
+scoreList (Game _ _ ps _ _) = sortBy (\(_,a) (_,b) -> compare a b) $ map (\p -> (name p, totalScore p)) ps
 
 getCurrentPlayer :: Game -> Player
 getCurrentPlayer (Game _ _ ps curr _) = ps !! curr

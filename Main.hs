@@ -24,7 +24,7 @@ gameLoop = do
 prettyPrint :: [Player] -> [String]
 prettyPrint ps = map pretty' ps
   where pretty' :: Player -> String
-        pretty' p@(Player nm cs ms) = nm ++ ": " ++ (show $ groupCards cs) ++ ", " ++ (show ms) ++ " markers, score: " ++ show (totalScore p)
+        pretty' p = name p ++ ": " ++ (show $ playerCards p) ++ ", " ++ (show $ markers p) ++ " markers, score: " ++ show (totalScore p)
 
 runGame :: NoThanksM ()
 runGame = do
@@ -81,10 +81,9 @@ main = do
     gen <- newStdGen
     players <- getPlayers
     let game = newGame gen players
-    (Game _ _ ps _ _) <- execStateT gameLoop game
-    let scores = sortBy (\(_,a) (_,b) -> compare a b) $ map (\p -> (name p, totalScore p)) ps
+    endGame <- execStateT gameLoop game
     putStrLn "*********"
     putStrLn "Game over"
     putStrLn "*********"
-    forM_ scores $ \(n,sc) -> putStrLn $ n ++ " final score: " ++ show sc
+    forM_ (scoreList endGame) $ \(n,sc) -> putStrLn $ n ++ " final score: " ++ show sc
 
