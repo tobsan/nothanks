@@ -6,3 +6,4 @@ more on [boardgamegeek](https://boardgamegeek.com/boardgame/12942/no-thanks).
 
 # TODO
 * Add support for more players and more cards.
+* Add some reasonable QuickCheck properties
